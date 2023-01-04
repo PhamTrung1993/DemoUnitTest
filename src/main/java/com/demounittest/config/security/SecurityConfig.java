@@ -23,6 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -46,8 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
@@ -70,10 +71,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomAccessDeniedHandler();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder(10);
+//    }
 
     @PostConstruct
     public void init() {
@@ -96,7 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             admin.setEmail("admin");
             admin.setCoachId("");
             admin.setName("");
-            admin.setPassword(passwordEncoder.encode("123456"));
+            admin.setPassword(NoOpPasswordEncoder.getInstance().encode("123456"));
             admin.setRoles(roles);
             coachService.save(admin);
         }
@@ -104,7 +105,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(coachService).passwordEncoder(passwordEncoder());
+        auth.userDetailsService(coachService).passwordEncoder(NoOpPasswordEncoder.getInstance());
     }
 
     @Override
